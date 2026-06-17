@@ -1,33 +1,46 @@
 <?php
-
 namespace Database\Factories;
-
-use App\Models\Book;
+ 
 use App\Models\Category;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-
+ 
 class BookFactory extends Factory
 {
-    protected $model = Book::class;
-
     public function definition(): array
     {
-        $format = $this->faker->randomElement(['pdf', 'epub']);
-        
         return [
-            'author_id' => User::where('role', 'author')->inRandomOrder()->first()->id ?? User::factory(),
-            'kategori_id' => Category::inRandomOrder()->first()->id ?? Category::factory(),
-            'judul' => $this->faker->sentence(3),
-            'isbn' => $this->faker->isbn13(),
-            'deskripsi' => $this->faker->paragraph(),
-            'cover' => null, // Default kosong, bisa diisi via upload
-            'file_buku' => $format === 'pdf' ? 'sample.pdf' : 'sample.epub',
-            'format' => $format,
-            'genre' => $this->faker->randomElement(['Fiksi', 'Sains', 'Sejarah', 'Teknologi', 'Novel']),
-            'jenis_akses' => $this->faker->randomElement(['free', 'premium']),
-            'minimal_usia' => $this->faker->randomElement([0, 13, 17]),
-            'status_verifikasi' => $this->faker->randomElement(['pending', 'verified', 'rejected']),
+            'author_id'         => User::factory()->author(),
+            'kategori_id'       => Category::factory(),
+            'judul'             => fake()->sentence(3),
+            'isbn'              => fake()->unique()->isbn13(),
+            'deskripsi'         => fake()->paragraph(5),
+            'cover'             => null,
+            'file_buku'         => 'sample.pdf',
+            'format'            => fake()->randomElement(['pdf', 'epub']),
+            'genre'             => fake()->randomElement(['Drama', 'Romance', 'Horor', 'Edukasi', 'Sejarah']),
+            'penerbit'          => fake()->company(),
+            'tahun_terbit'      => fake()->year(),
+            'jumlah_halaman'    => fake()->numberBetween(80, 500),
+            'jenis_akses'       => fake()->randomElement(['gratis', 'premium']),
+            'minimal_usia'      => fake()->randomElement([0, 0, 0, 17, 18]),
+            'status_verifikasi' => 'verified',
+            'views'             => fake()->numberBetween(0, 10000),
         ];
+    }
+ 
+    public function pending(): static
+    {
+        return $this->state(fn () => ['status_verifikasi' => 'pending']);
+    }
+ 
+    public function premium(): static
+    {
+        return $this->state(fn () => ['jenis_akses' => 'premium']);
+    }
+ 
+    public function adultOnly(): static
+    {
+        return $this->state(fn () => ['minimal_usia' => 18]);
     }
 }

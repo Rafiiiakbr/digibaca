@@ -1,0 +1,16 @@
+{
+    "name": "digibaca",
+    "private": true,
+    "version": "1.0.0",
+    "description": "DigiBaca — Sistem Membaca Buku Online/Digital",
+    "scripts": {
+        "dev": "echo 'DigiBaca menggunakan CDN untuk semua asset frontend (Bootstrap, PDF.js, epub.js). Tidak ada build step yang diperlukan. Cukup jalankan: php artisan serve'",
+        "build": "echo 'Tidak ada build step. Asset CSS/JS statis berada di public/assets/'"
+    },
+    "devDependencies": {},
+    "notes": [
+        "Proyek ini SENGAJA tidak menggunakan Vite/Webpack agar setup sesederhana mungkin untuk keperluan akademik.",
+        "Semua library frontend (Bootstrap 5, Bootstrap Icons, PDF.js, epub.js, JSZip) dimuat via CDN langsung di Blade layout.",
+        "Jika ingin migrasi ke Vite di kemudian hari, jalankan: php artisan install:api lalu npm install vite laravel-vite-plugin --save-dev"
+    ]
+}
