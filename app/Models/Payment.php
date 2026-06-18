@@ -4,12 +4,51 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Payment extends Model 
+class Payment extends Model
 {
-    protected $fillable = ['user_id', 'nominal', 'status', 'tanggal_bayar'];
+    protected $fillable = [
+        'user_id',
+        'nominal',
+        'status',
+        'metode',
+        'kode_pembayaran',
+        'bukti_transfer',
+        'catatan_admin',
+        'tanggal_bayar',
+    ];
 
-    public function user() 
-    { 
-        return $this->belongsTo(User::class); 
+    protected $casts = [
+        'nominal' => 'decimal:2',
+        'tanggal_bayar' => 'datetime',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function confirm(): void
+    {
+        $this->update([
+            'status' => 'confirmed',
+            'tanggal_bayar' => now(),
+        ]);
+
+        $this->user->update([
+            'status_premium' => true,
+        ]);
+    }
+
+    public function reject(string $catatan = ''): void
+    {
+        $this->update([
+            'status' => 'rejected',
+            'catatan_admin' => $catatan,
+        ]);
+    }
+
+    public static function generateKodePembayaran(): string
+    {
+        return 'DIGIBACA-' . strtoupper(uniqid());
     }
 }

@@ -1,77 +1,188 @@
-@extends('layouts.app')
-@section('title', 'Panel Kontrol Admin')
+{{--
+|=============================================================
+| FILE: resources/views/admin/dashboard.blade.php
+|=============================================================
+--}}
+@extends('layouts.admin')
+
+@section('title', 'Dashboard Admin')
+@section('page-title', 'Dashboard Admin')
 
 @section('content')
-<div class="container py-4">
-    <div class="mb-4">
-        <h2 class="fw-bold mb-1">Ringkasan Sistem</h2>
-        <p class="text-muted mb-0">Panel kendali metrik pertumbuhan data dan modul verifikasi.</p>
-    </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-md-3 col-sm-6">
-            <div class="card p-3 border-start border-primary border-4 bg-white">
-                <span class="text-muted small d-block mb-1 fw-medium">TOTAL PEMBACA</span>
-                <h3 class="fw-bold mb-0 text-primary">{{ $total_user }}</h3>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card p-3 border-start border-success border-4 bg-white">
-                <span class="text-muted small d-block mb-1 fw-medium">TOTAL PENULIS</span>
-                <h3 class="fw-bold mb-0 text-success">{{ $total_author }}</h3>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card p-3 border-start border-info border-4 bg-white">
-                <span class="text-muted small d-block mb-1 fw-medium">TOTAL BUKU</span>
-                <h3 class="fw-bold mb-0 text-info">{{ $total_buku }}</h3>
-            </div>
-        </div>
-        <div class="col-md-3 col-sm-6">
-            <div class="card p-3 border-start border-warning border-4 bg-white">
-                <span class="text-muted small d-block mb-1 fw-medium">PREMIUM MEMBERS</span>
-                <h3 class="fw-bold mb-0 text-warning">{{ $total_premium_user }}</h3>
+<div class="row g-4 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#E0E7FF; color:var(--color-ink);"><i class="bi bi-people"></i></div>
+            <div>
+                <div class="stat-value">{{ $stats['total_users'] }}</div>
+                <div class="stat-label">Total Pengguna</div>
             </div>
         </div>
     </div>
-
-    <div class="row g-4">
-        <div class="col-lg-7">
-            <div class="card p-4 h-100">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h5 class="fw-bold mb-0">Antrean Verifikasi Buku</h5>
-                    <span class="badge bg-danger rounded-pill">{{ $buku_pending }} Perlu Review</span>
-                </div>
-                <div class="text-muted small">
-                    <p>Fungsionalitas persetujuan (approval) penuh dan penolakan buku akan diintegrasikan pada modul CRUD manajemen admin selanjutnya.</p>
-                </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#D1FAE5; color:#065F46;"><i class="bi bi-journal-richtext"></i></div>
+            <div>
+                <div class="stat-value">{{ $stats['total_books'] }}</div>
+                <div class="stat-label">Total Buku</div>
             </div>
         </div>
-
-        <div class="col-lg-5">
-            <div class="card p-4 h-100">
-                <h5 class="fw-bold mb-3">Transaksi Premium Terbaru</h5>
-                <ul class="list-group list-group-flush small">
-                    @forelse($recent_payments as $payment)
-                        <li class="list-group-item px-0 py-2 d-flex justify-content-between align-items-center">
-                            <div>
-                                <span class="fw-semibold d-block">{{ $payment->user->nama }}</span>
-                                <small class="text-muted">{{ $payment->created_at->diffForHumans() }}</small>
-                            </div>
-                            <span class="badge {{ $payment->status == 'success' ? 'bg-success-subsub' : 'bg-secondary' }} text-success fw-bold">
-                                Rp {{ number_format($payment->nominal, 0, ',', '.') }}
-                            </span>
-                        </li>
-                    @empty
-                        <li class="list-group-item px-0 py-3 text-center text-muted">Belum ada riwayat transaksi masuk.</li>
-                    @endforelse
-                </ul>
-                <div class="mt-3 pt-2 border-top bg-light p-2 rounded text-center">
-                    <small class="text-muted">Total Dana Likuid: </small>
-                    <strong class="text-success">Rp {{ number_format($total_pendapatan, 0, ',', '.') }}</strong>
-                </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#FEF3C7; color:#92400E;"><i class="bi bi-pencil-square"></i></div>
+            <div>
+                <div class="stat-value">{{ $stats['total_authors'] }}</div>
+                <div class="stat-label">Total Penulis</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#FEE2E2; color:#991B1B;"><i class="bi bi-gem"></i></div>
+            <div>
+                <div class="stat-value">{{ $stats['total_premium'] }}</div>
+                <div class="stat-label">Pengguna Premium</div>
             </div>
         </div>
     </div>
 </div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#FEF3C7; color:#92400E;"><i class="bi bi-hourglass-split"></i></div>
+            <div>
+                <div class="stat-value">{{ $stats['pending_books'] }}</div>
+                <div class="stat-label">Buku Menunggu Verifikasi</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#D1FAE5; color:#065F46;"><i class="bi bi-patch-check"></i></div>
+            <div>
+                <div class="stat-value">{{ $stats['verified_books'] }}</div>
+                <div class="stat-label">Buku Terverifikasi</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#E0E7FF; color:var(--color-ink);"><i class="bi bi-credit-card"></i></div>
+            <div>
+                <div class="stat-value">{{ $stats['pending_payments'] }}</div>
+                <div class="stat-label">Pembayaran Pending</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card">
+            <div class="stat-icon" style="background:#D1FAE5; color:#065F46;"><i class="bi bi-cash-stack"></i></div>
+            <div>
+                <div class="stat-value">Rp{{ number_format($stats['total_revenue'], 0, ',', '.') }}</div>
+                <div class="stat-label">Total Pendapatan</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    {{-- Buku Menunggu Verifikasi --}}
+    <div class="col-md-7">
+        <div class="card-digibaca h-100">
+            <div class="card-header-custom">
+                <span><i class="bi bi-hourglass-split me-2"></i>Buku Menunggu Verifikasi</span>
+                <a href="{{ route('admin.books.index', ['status' => 'pending']) }}" class="small">Lihat Semua</a>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-digibaca mb-0">
+                    <thead><tr><th>Buku</th><th>Penulis</th><th></th></tr></thead>
+                    <tbody>
+                        @forelse($pendingBooks as $book)
+                        <tr>
+                            <td class="fw-semibold">{{ Str::limit($book->judul, 30) }}</td>
+                            <td class="text-muted">{{ $book->author->nama ?? '-' }}</td>
+                            <td class="text-end">
+                                <a href="{{ route('admin.books.index') }}" class="btn btn-sm btn-digibaca">Tinjau</a>
+                            </td>
+                        </tr>
+                        @empty
+                        <tr><td colspan="3"><div class="empty-state py-3"><i class="bi bi-check-circle"></i><p class="mb-0 small">Tidak ada buku menunggu verifikasi.</p></div></td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {{-- Pembayaran Pending --}}
+    <div class="col-md-5">
+        <div class="card-digibaca h-100">
+            <div class="card-header-custom">
+                <span><i class="bi bi-credit-card me-2"></i>Pembayaran Pending</span>
+                <a href="{{ route('admin.premium.index') }}" class="small">Lihat Semua</a>
+            </div>
+            <div class="p-3">
+                @forelse($recentPayments as $p)
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                    <div>
+                        <div class="small fw-semibold">{{ $p->user->nama }}</div>
+                        <div class="text-muted" style="font-size:0.72rem;">Rp{{ number_format($p->nominal, 0, ',', '.') }} via {{ $p->metode }}</div>
+                    </div>
+                    <a href="{{ route('admin.premium.index') }}" class="btn btn-sm btn-outline-digibaca">Cek</a>
+                </div>
+                @empty
+                <div class="empty-state py-3"><i class="bi bi-check-circle"></i><p class="mb-0 small">Tidak ada pembayaran pending.</p></div>
+                @endforelse
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-1">
+    {{-- Statistik Kategori --}}
+    <div class="col-md-7">
+        <div class="card-digibaca">
+            <div class="card-header-custom"><span><i class="bi bi-bar-chart-line me-2"></i>Distribusi Buku per Kategori</span></div>
+            <div class="p-3">
+                @foreach($categories as $cat)
+                @php $percent = $stats['total_books'] > 0 ? round($cat->verified_books_count / $stats['total_books'] * 100) : 0; @endphp
+                <div class="mb-2">
+                    <div class="d-flex justify-content-between small mb-1">
+                        <span>{{ $cat->nama_kategori }}</span>
+                        <span class="text-muted">{{ $cat->verified_books_count }} buku</span>
+                    </div>
+                    <div class="progress" style="height:8px;">
+                        <div class="progress-bar" style="background: var(--color-ink); width: {{ $percent }}%;"></div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    {{-- User Terbaru --}}
+    <div class="col-md-5">
+        <div class="card-digibaca">
+            <div class="card-header-custom">
+                <span><i class="bi bi-person-plus me-2"></i>Pengguna Terbaru</span>
+                <a href="{{ route('admin.users.index') }}" class="small">Lihat Semua</a>
+            </div>
+            <div class="p-3">
+                @foreach($recentUsers as $u)
+                <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                    <div class="d-flex align-items-center gap-2">
+                        <img src="{{ $u->avatar_url }}" style="width:30px;height:30px;border-radius:50%;" alt="">
+                        <span class="small fw-semibold">{{ $u->nama }}</span>
+                    </div>
+                    <span class="badge bg-light text-dark border">{{ ucfirst($u->role) }}</span>
+                </div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+</div>
+
 @endsection

@@ -1,0 +1,543 @@
+:root {
+  /* Colors */
+  --color-ink:        #1E1B4B;   /* deep indigo - headers, sidebar */
+  --color-ink-light:  #312C7E;
+  --color-amber:       #F59E0B;   /* warm accent - CTA, premium */
+  --color-amber-dark:  #D97706;
+  --color-bg:          #F8F7FC;
+  --color-surface:     #FFFFFF;
+  --color-text:        #1F2937;
+  --color-text-muted:  #6B7280;
+  --color-border:      #E5E7EB;
+  --color-success:     #16A34A;
+  --color-danger:      #DC2626;
+  --color-info:        #0EA5E9;
+ 
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, sans-serif;
+ 
+  /* Radius & Shadow */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --shadow-card: 0 2px 12px rgba(30, 27, 75, 0.08);
+  --shadow-card-hover: 0 12px 32px rgba(30, 27, 75, 0.16);
+}
+ 
+* { box-sizing: border-box; }
+ 
+body {
+  font-family: var(--font-body);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+ 
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+ 
+a { text-decoration: none; }
+ 
+/* ===========================================================
+   NAVBAR (Public)
+   =========================================================== */
+.navbar-digibaca {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: 0.9rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+ 
+.navbar-digibaca .brand {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--color-ink);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+ 
+.navbar-digibaca .brand .brand-mark {
+  width: 34px;
+  height: 34px;
+  background: linear-gradient(135deg, var(--color-ink) 0%, var(--color-ink-light) 100%);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-amber);
+  font-size: 1.1rem;
+}
+ 
+.navbar-digibaca .nav-link {
+  color: var(--color-text);
+  font-weight: 500;
+  padding: 0.5rem 1rem !important;
+  border-radius: var(--radius-sm);
+  transition: 0.2s;
+}
+ 
+.navbar-digibaca .nav-link:hover,
+.navbar-digibaca .nav-link.active {
+  color: var(--color-ink);
+  background: var(--color-bg);
+}
+ 
+/* ===========================================================
+   BUTTONS
+   =========================================================== */
+.btn-digibaca {
+  background: var(--color-ink);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.4rem;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+.btn-digibaca:hover { background: var(--color-ink-light); color: #fff; transform: translateY(-1px); }
+ 
+.btn-amber {
+  background: var(--color-amber);
+  color: var(--color-ink);
+  border: none;
+  border-radius: var(--radius-sm);
+  padding: 0.6rem 1.4rem;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+.btn-amber:hover { background: var(--color-amber-dark); color: #fff; transform: translateY(-1px); }
+ 
+.btn-outline-digibaca {
+  background: transparent;
+  color: var(--color-ink);
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--radius-sm);
+  padding: 0.55rem 1.3rem;
+  font-weight: 600;
+  transition: 0.2s ease;
+}
+.btn-outline-digibaca:hover { background: var(--color-ink); color: #fff; }
+ 
+/* ===========================================================
+   BOOK CARD — signature element (folded-page corner)
+   =========================================================== */
+.book-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  transition: 0.25s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+.book-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+ 
+.book-card .cover-wrap {
+  position: relative;
+  aspect-ratio: 3/4;
+  background: linear-gradient(135deg, #ece9f7, #ddd8f0);
+  overflow: hidden;
+}
+.book-card .cover-wrap img {
+  width: 100%; height: 100%; object-fit: cover;
+}
+ 
+/* folded page corner */
+.book-card .cover-wrap::after {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 0 28px 28px 0;
+  border-color: transparent var(--color-bg) transparent transparent;
+  filter: drop-shadow(-2px 2px 3px rgba(0,0,0,0.15));
+}
+ 
+.book-card .badge-akses {
+  position: absolute;
+  top: 10px; left: 10px;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 0.25rem 0.6rem;
+  border-radius: 100px;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.badge-gratis { background: rgba(22, 163, 74, 0.95); color: #fff; }
+.badge-premium { background: var(--color-amber); color: var(--color-ink); }
+.badge-usia { background: rgba(220, 38, 38, 0.95); color: #fff; }
+ 
+.book-card .card-body-custom {
+  padding: 1rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+ 
+.book-card .book-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 0.98rem;
+  color: var(--color-ink);
+  margin-bottom: 0.2rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+ 
+.book-card .book-author {
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  margin-bottom: 0.5rem;
+}
+ 
+.book-card .book-meta {
+  margin-top: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  border-top: 1px solid var(--color-border);
+  padding-top: 0.5rem;
+}
+ 
+/* ===========================================================
+   SIDEBAR (Dashboard layouts)
+   =========================================================== */
+.sidebar-digibaca {
+  background: var(--color-ink);
+  min-height: 100vh;
+  width: 260px;
+  position: fixed;
+  top: 0; left: 0;
+  z-index: 1030;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.25s ease;
+}
+ 
+.sidebar-digibaca .sidebar-brand {
+  padding: 1.4rem 1.5rem;
+  font-family: var(--font-display);
+  color: #fff;
+  font-size: 1.3rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+.sidebar-digibaca .sidebar-brand .mark { color: var(--color-amber); }
+ 
+.sidebar-digibaca .nav-section-label {
+  color: rgba(255,255,255,0.35);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 1rem 1.5rem 0.4rem;
+  font-weight: 700;
+}
+ 
+.sidebar-digibaca .nav-link {
+  color: rgba(255,255,255,0.75);
+  padding: 0.65rem 1.5rem;
+  font-size: 0.92rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  border-left: 3px solid transparent;
+  transition: 0.15s;
+}
+.sidebar-digibaca .nav-link i { font-size: 1.05rem; width: 20px; }
+.sidebar-digibaca .nav-link:hover {
+  color: #fff;
+  background: rgba(255,255,255,0.05);
+}
+.sidebar-digibaca .nav-link.active {
+  color: #fff;
+  background: rgba(245, 158, 11, 0.12);
+  border-left-color: var(--color-amber);
+  font-weight: 600;
+}
+ 
+.sidebar-digibaca .sidebar-user {
+  margin-top: auto;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.sidebar-digibaca .sidebar-user img {
+  width: 36px; height: 36px; border-radius: 50%;
+}
+.sidebar-digibaca .sidebar-user .name { color: #fff; font-size: 0.85rem; font-weight: 600; }
+.sidebar-digibaca .sidebar-user .role { color: rgba(255,255,255,0.45); font-size: 0.72rem; }
+ 
+.dashboard-content {
+  margin-left: 260px;
+  padding: 2rem;
+  min-height: 100vh;
+}
+ 
+.dashboard-topbar {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 1rem 1.5rem;
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow-card);
+}
+ 
+@media (max-width: 991px) {
+  .sidebar-digibaca { transform: translateX(-100%); }
+  .sidebar-digibaca.show { transform: translateX(0); }
+  .dashboard-content { margin-left: 0; padding: 1rem; }
+}
+ 
+/* ===========================================================
+   STAT CARD
+   =========================================================== */
+.stat-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 1.4rem;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  height: 100%;
+}
+.stat-card .stat-icon {
+  width: 52px; height: 52px;
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem;
+  flex-shrink: 0;
+}
+.stat-card .stat-value {
+  font-family: var(--font-display);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  line-height: 1;
+}
+.stat-card .stat-label {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+  margin-top: 0.2rem;
+}
+ 
+/* ===========================================================
+   CARD GENERIC / TABLE
+   =========================================================== */
+.card-digibaca {
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  border: none;
+}
+.card-digibaca .card-header-custom {
+  padding: 1.2rem 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+  font-family: var(--font-display);
+  font-weight: 600;
+  color: var(--color-ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ 
+.table-digibaca thead th {
+  background: var(--color-bg);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  font-weight: 700;
+  border-bottom: none;
+  padding: 0.85rem 1rem;
+}
+.table-digibaca td { padding: 0.85rem 1rem; vertical-align: middle; }
+ 
+.badge-status-pending  { background: #FEF3C7; color: #92400E; }
+.badge-status-verified { background: #D1FAE5; color: #065F46; }
+.badge-status-rejected { background: #FEE2E2; color: #991B1B; }
+.badge-status-pending, .badge-status-verified, .badge-status-rejected {
+  font-weight: 600; font-size: 0.75rem; padding: 0.3rem 0.7rem; border-radius: 100px;
+}
+ 
+/* ===========================================================
+   AUTH PAGES
+   =========================================================== */
+.auth-wrapper {
+  min-height: 100vh;
+  display: flex;
+}
+.auth-visual {
+  flex: 1;
+  background: linear-gradient(160deg, var(--color-ink) 0%, #2D2870 60%, var(--color-ink-light) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 4rem;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.auth-visual::before {
+  content: '';
+  position: absolute;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(245,158,11,0.18), transparent 70%);
+  top: -100px; right: -150px;
+}
+.auth-visual h1 {
+  font-size: 2.4rem;
+  color: #fff;
+  max-width: 420px;
+}
+.auth-visual p { color: rgba(255,255,255,0.7); max-width: 380px; }
+.auth-form-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: var(--color-surface);
+}
+.auth-form-box { width: 100%; max-width: 420px; }
+ 
+.form-control-digibaca {
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 0.65rem 1rem;
+  font-size: 0.92rem;
+}
+.form-control-digibaca:focus {
+  border-color: var(--color-ink);
+  box-shadow: 0 0 0 3px rgba(30,27,75,0.1);
+}
+ 
+@media (max-width: 900px) {
+  .auth-visual { display: none; }
+}
+ 
+/* ===========================================================
+   READER (PDF/ePub) VIEWER
+   =========================================================== */
+.reader-shell {
+  background: #2b2b35;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+.reader-topbar {
+  background: #1E1B4B;
+  color: #fff;
+  padding: 0.7rem 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.reader-topbar .reader-title {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 600;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.reader-toolbar-btn {
+  background: rgba(255,255,255,0.08);
+  border: none;
+  color: #fff;
+  padding: 0.4rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  transition: 0.15s;
+}
+.reader-toolbar-btn:hover { background: rgba(255,255,255,0.18); color: #fff; }
+.reader-toolbar-btn.active { background: var(--color-amber); color: var(--color-ink); }
+ 
+.reader-canvas-wrap {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  overflow-y: auto;
+  padding: 1.5rem 0;
+}
+#pdf-canvas-container canvas {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  background: #fff;
+}
+#epub-viewer-container {
+  background: #fdfaf3;
+  width: 100%;
+  max-width: 800px;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+ 
+.reader-sidepanel {
+  position: fixed;
+  right: 0; top: 0;
+  height: 100vh;
+  width: 320px;
+  background: #fff;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.2);
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+  z-index: 1100;
+  display: flex;
+  flex-direction: column;
+}
+.reader-sidepanel.show { transform: translateX(0); }
+.reader-sidepanel .panel-header {
+  padding: 1rem 1.2rem;
+  border-bottom: 1px solid var(--color-border);
+  display: flex; justify-content: space-between; align-items: center;
+  font-family: var(--font-display); font-weight: 600;
+}
+.reader-sidepanel .panel-body { padding: 1rem 1.2rem; overflow-y: auto; flex: 1; }
+ 
+/* Utility */
+.text-amber { color: var(--color-amber); }
+.bg-ink { background: var(--color-ink); }
+.section-eyebrow {
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-amber-dark);
+}
+ 
+.empty-state {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-muted);
+}
+.empty-state i { font-size: 2.8rem; color: var(--color-border); margin-bottom: 1rem; display: block; }
