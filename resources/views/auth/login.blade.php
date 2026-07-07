@@ -1,40 +1,55 @@
-@extends('layouts.app')
-@section('title', 'Masuk Akun')
-
+@extends('layouts.auth')
+ 
+@section('title', 'Masuk')
+ 
 @section('content')
-<div class="container">
-    <div class="row justify-content-center align-items-center" style="min-height: 75vh;">
-        <div class="col-md-5">
-            <div class="card p-4 shadow-sm">
-                <div class="card-body">
-                    <h3 class="card-title text-center mb-4 fw-bold">Selamat Datang Kembali</h3>
-                    <p class="text-muted text-center mb-4">Masuk untuk melanjutkan membaca koleksi buku digital Anda.</p>
-                    
-                    <form action="{{ route('login') }}" method="POST">
-                        @csrf
-                        <div class="mb-3">
-                            <label class="form-label">Alamat Email</label>
-                            <input type="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autofocus>
-                            @error('email')
-                                <div class="invalid-feedback">{{ $message }}</div>
-                            @enderror
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Kata Sandi</label>
-                            <input type="password" name="password" class="form-control" required>
-                        </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" name="remember" class="form-check-input" id="remember">
-                            <label class="form-check-label" for="remember">Ingat Saya</label>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 py-2.5 mb-3 fw-semibold">Masuk Sekarang</button>
-                    </form>
-                    <div class="text-center">
-                        <p class="mb-0 text-muted">Belum punya akun? <a href="{{ route('register') }}" class="text-decoration-none">Daftar Akun Baru</a></p>
-                    </div>
-                </div>
+    <h2 class="font-display mb-1">Selamat Datang Kembali</h2>
+    <p class="text-muted mb-4">Masuk untuk melanjutkan membaca buku favorit Anda.</p>
+ 
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle-fill me-1"></i> {{ $errors->first() }}
+        </div>
+    @endif
+ 
+    <form method="POST" action="{{ route('login') }}">
+        @csrf
+        <div class="mb-3">
+            <label class="form-label fw-semibold small">Alamat Email</label>
+            <input type="email" name="email" value="{{ old('email') }}" class="form-control form-control-digibaca" placeholder="nama@email.com" required autofocus>
+        </div>
+ 
+        <div class="mb-2">
+            <label class="form-label fw-semibold small">Password</label>
+            <div class="input-group">
+                <input type="password" name="password" id="passwordInput" class="form-control form-control-digibaca" placeholder="••••••••" required>
+                <button type="button" class="btn btn-outline-secondary toggle-password" data-target="#passwordInput">
+                    <i class="bi bi-eye"></i>
+                </button>
             </div>
         </div>
+ 
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                <label class="form-check-label small" for="remember">Ingat saya</label>
+            </div>
+            <a href="{{ route('password.request') }}" class="small">Lupa password?</a>
+        </div>
+ 
+        <button type="submit" class="btn btn-digibaca w-100 mb-3">Masuk</button>
+ 
+        <p class="text-center small text-muted">
+            Belum punya akun? <a href="{{ route('register') }}" class="fw-semibold">Daftar sekarang</a>
+        </p>
+    </form>
+ 
+    <div class="mt-4 p-3 rounded-3" style="background: var(--color-bg);">
+        <p class="small fw-semibold mb-2"><i class="bi bi-info-circle me-1"></i> Akun Demo</p>
+        <ul class="small text-muted mb-0 ps-3">
+            <li>Admin: admin@digibaca.test / password</li>
+            <li>Penulis: author@digibaca.test / password</li>
+            <li>Pembaca: reader@digibaca.test / password</li>
+        </ul>
     </div>
-</div>
 @endsection

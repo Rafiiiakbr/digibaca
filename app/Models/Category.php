@@ -4,11 +4,22 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Category extends Model {
-    protected $table = 'categories';
-    protected $fillable = ['nama_kategori'];
+class Category extends Model
+{
+    protected $fillable = [
+        'nama_kategori',
+        'deskripsi',
+        'icon',
+    ];
 
-    public function books() {
+    public function books()
+    {
         return $this->hasMany(Book::class, 'kategori_id');
+    }
+
+    public function verifiedBooks()
+    {
+        return $this->hasMany(Book::class, 'kategori_id')
+            ->where('status_verifikasi', 'verified');
     }
 }

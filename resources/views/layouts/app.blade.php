@@ -1,89 +1,160 @@
+{{--
+|=============================================================
+| FILE: resources/views/layouts/app.blade.php
+| Layout publik (landing, katalog, detail buku)
+|=============================================================
+--}}
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Pustaka Digital') - ReadOn</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/mixins/_box-shadow.scss" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .navbar-brand { font-weight: 700; color: #0d6efd; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
-    </style>
-    @yield('styles')
+    <title>@yield('title', 'DigiBaca') — Sistem Membaca Buku Digital</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="{{ asset('assets/css/app.css') }}">
+    @stack('styles')
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg navbar-white bg-white border-bottom sticky-top">
+    <nav class="navbar navbar-digibaca navbar-expand-lg">
         <div class="container">
-            <a class="navbar-brand" href="{{ route('landing') }}"><i class="bi bi-book-half"></i> ReadOn</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-span"></span>
+            <a class="brand" href="{{ route('home') }}">
+                <span class="brand-mark"><i class="bi bi-book"></i></span>
+                DigiBaca
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMain">
+                <i class="bi bi-list fs-2"></i>
             </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto align-items-center">
+            <div class="collapse navbar-collapse" id="navMain">
+                <ul class="navbar-nav ms-auto align-items-lg-center gap-1">
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('home') ? 'active' : '' }}" href="{{ route('home') }}">Beranda</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('books.*') ? 'active' : '' }}" href="{{ route('books.index') }}">Katalog</a>
+                    </li>
+
                     @auth
-                        <li class="nav-item me-3">
-                            <span class="badge bg-secondary text-capitalize">Role: {{ Auth::user()->role }}</span>
-                            @if(Auth::user()->status_premium)
-                                <span class="badge bg-warning text-dark"><i class="bi bi-crown-fill"></i> Premium</span>
-                            @endif
-                        </li>
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle btn btn-light px-3" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle"></i> Halo, {{ Auth::user()->nama }}
+                        @if(auth()->user()->isReader())
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('reader.dashboard') }}">Dashboard</a>
+                            </li>
+                        @elseif(auth()->user()->isAuthor())
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('author.dashboard') }}">Dashboard Penulis</a>
+                            </li>
+                        @elseif(auth()->user()->isAdmin())
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ route('admin.dashboard') }}">Dashboard Admin</a>
+                            </li>
+                        @endif
+
+                        <li class="nav-item dropdown ms-2">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" data-bs-toggle="dropdown">
+                                <img src="{{ auth()->user()->avatar_url }}" class="rounded-circle" width="30" height="30" alt="">
+                                <span>{{ Str::limit(auth()->user()->nama, 14) }}</span>
+                                @if(auth()->user()->isPremium())
+                                    <span class="badge badge-premium" style="font-size:0.6rem;">PRO</span>
+                                @endif
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li>
-                                    @if(Auth::user()->role == 'admin')
-                                        <a class="dropdown-menu-item dropdown-item" href="{{ route('admin.dashboard') }}">Dashboard Admin</a>
-                                    @elseif(Auth::user()->role == 'author')
-                                        <a class="dropdown-menu-item dropdown-item" href="{{ route('author.dashboard') }}">Dashboard Penulis</a>
-                                    @else
-                                        <a class="dropdown-menu-item dropdown-item" href="{{ route('reader.dashboard') }}">Dashboard Baca</a>
-                                    @endif
-                                </li>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+                                @if(auth()->user()->isReader())
+                                <li><a class="dropdown-item" href="{{ route('reader.profile') }}"><i class="bi bi-person me-2"></i>Profil Saya</a></li>
+                                <li><a class="dropdown-item" href="{{ route('reader.collection') }}"><i class="bi bi-bookmark-heart me-2"></i>Koleksi Saya</a></li>
+                                @if(!auth()->user()->isPremium())
+                                <li><a class="dropdown-item text-amber fw-semibold" href="{{ route('premium.upgrade') }}"><i class="bi bi-gem me-2"></i>Upgrade Premium</a></li>
+                                @endif
                                 <li><hr class="dropdown-divider"></li>
+                                @endif
                                 <li>
-                                    <form action="{{ route('logout') }}" method="POST">
+                                    <form method="POST" action="{{ route('logout') }}">
                                         @csrf
-                                        <button type="submit" class="dropdown-item text-danger"><i class="bi bi-box-arrow-right"></i> Keluar</button>
+                                        <button class="dropdown-item text-danger"><i class="bi bi-box-arrow-right me-2"></i>Logout</button>
                                     </form>
                                 </li>
                             </ul>
                         </li>
                     @else
-                        <li class="nav-item"><a class="nav-link" href="{{ route('login') }}">Masuk</a></li>
-                        <li class="nav-item"><a class="btn btn-primary ms-2 px-4" href="{{ route('register') }}">Daftar</a></li>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-outline-digibaca btn-sm" href="{{ route('login') }}">Masuk</a>
+                        </li>
+                        <li class="nav-item ms-2">
+                            <a class="btn btn-digibaca btn-sm" href="{{ route('register') }}">Daftar Gratis</a>
+                        </li>
                     @endauth
                 </ul>
             </div>
         </div>
     </nav>
 
-    <div class="container mt-4">
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
-                <i class="bi bi-check-circle-fill me-2"></i> {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    @if(session('success'))
+        <div class="container mt-3">
+            <div class="alert alert-success d-flex align-items-center gap-2 shadow-sm" role="alert">
+                <i class="bi bi-check-circle-fill"></i> {{ session('success') }}
             </div>
-        @endif
-        @if(session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <i class="bi bi-exclamation-triangle-fill me-2"></i> {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    @endif
+    @if(session('error'))
+        <div class="container mt-3">
+            <div class="alert alert-danger d-flex align-items-center gap-2 shadow-sm" role="alert">
+                <i class="bi bi-exclamation-triangle-fill"></i> {{ session('error') }}
             </div>
-        @endif
-    </div>
+        </div>
+    @endif
+    @if(session('info'))
+        <div class="container mt-3">
+            <div class="alert alert-info d-flex align-items-center gap-2 shadow-sm" role="alert">
+                <i class="bi bi-info-circle-fill"></i> {{ session('info') }}
+            </div>
+        </div>
+    @endif
 
-    <main class="py-2">
+    <main>
         @yield('content')
     </main>
 
+    <footer class="bg-ink text-white-50 py-5 mt-5">
+        <div class="container">
+            <div class="row gy-4">
+                <div class="col-md-4">
+                    <div class="d-flex align-items-center gap-2 text-white mb-2">
+                        <span class="brand-mark"><i class="bi bi-book"></i></span>
+                        <span class="font-display fw-bold fs-5">DigiBaca</span>
+                    </div>
+                    <p class="small mb-0">Platform membaca buku digital dengan koleksi PDF dan ePub, untuk pembaca masa kini.</p>
+                </div>
+                <div class="col-md-2">
+                    <h6 class="text-white small text-uppercase">Navigasi</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="{{ route('home') }}" class="text-white-50">Beranda</a></li>
+                        <li><a href="{{ route('books.index') }}" class="text-white-50">Katalog</a></li>
+                        <li><a href="{{ route('register') }}" class="text-white-50">Daftar</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-white small text-uppercase">Untuk Penulis</h6>
+                    <ul class="list-unstyled small">
+                        <li><a href="{{ route('register') }}" class="text-white-50">Mulai Menulis</a></li>
+                        <li><a href="#" class="text-white-50">Panduan Upload</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h6 class="text-white small text-uppercase">Kontak</h6>
+                    <p class="small mb-0">support@digibaca.test<br>Tangerang Selatan, Indonesia</p>
+                </div>
+            </div>
+            <hr class="border-secondary my-4">
+            <p class="small text-center mb-0">&copy; {{ date('Y') }} DigiBaca. Proyek akademik — dibangun dengan Laravel 12.</p>
+        </div>
+    </footer>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    @yield('scripts')
+    <script src="{{ asset('assets/js/app.js') }}"></script>
+    @stack('scripts')
 </body>
 </html>

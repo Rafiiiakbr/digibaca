@@ -3,50 +3,48 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Auth\RegisterRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Password;
 
 class AuthController extends Controller
 {
-    // Menampilkan halaman login
     public function showLogin()
     {
         return view('auth.login');
     }
 
-    // Memproses aksi login
     public function login(Request $request)
     {
         $credentials = $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            'email' => ['required', 'email'],
+            'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials, $request->remember)) {
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            // Redirect otomatis berdasarkan Role setelah login berhasil
-            return match (Auth::user()->role) {
-                'admin' => redirect()->intended(route('admin.dashboard')),
-                'author' => redirect()->intended(route('author.dashboard')),
-                'reader' => redirect()->intended(route('reader.dashboard')),
-            };
+            return redirect()->intended(
+                $this->redirectBasedOnRole(Auth::user())
+            );
         }
 
-        return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
-        ])->onlyInput('email');
+        return back()
+            ->withErrors([
+                'email' => 'Email atau password salah.',
+            ])
+            ->onlyInput('email');
     }
 
-    // Menampilkan halaman registrasi
     public function showRegister()
     {
         return view('auth.register');
     }
 
+<<<<<<< HEAD
     // Memproses aksi registrasi
     public function register(Request $request)
     {
@@ -62,30 +60,101 @@ class AuthController extends Controller
         ]);
 
         // Menyimpan data user baru
+=======
+    public function register(RegisterRequest $request)
+    {
+>>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2
         $user = User::create([
             'nama' => $request->nama,
             'email' => $request->email,
-            'password' => Hash::make($request->password), // Enkripsi BCrypt otomatis oleh Laravel
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
             'tanggal_lahir' => $request->tanggal_lahir,
+<<<<<<< HEAD
             'role' => $request->role,
             'status_premium' => false,
+=======
+>>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2
         ]);
 
         Auth::login($user);
 
+<<<<<<< HEAD
         // Redirect ke dashboard yang sesuai dengan role yang didaftarkan
         $redirectRoute = $user->role === 'author' ? 'author.dashboard' : 'reader.dashboard';
 
         return redirect()->route($redirectRoute)->with('success', 'Registrasi berhasil! Selamat datang.');
+=======
+        return redirect($this->redirectBasedOnRole($user))
+            ->with('success', 'Selamat datang, ' . $user->nama . '!');
+>>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2
     }
 
-    // Memproses logout
     public function logout(Request $request)
     {
         Auth::logout();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login')->with('success', 'Anda telah berhasil logout.');
+        return redirect('/')
+            ->with('success', 'Berhasil logout.');
     }
+
+    private function redirectBasedOnRole(User $user): string
+    {
+        return match ($user->role) {
+            'admin' => route('admin.dashboard'),
+            'author' => route('author.dashboard'),
+            default => route('reader.dashboard'),
+        };
+    }
+class AuthControllerPasswordResetAddition
+{
+    /*
+     * Tempelkan method di bawah ini ke dalam app/Http/Controllers/Auth/AuthController.php
+     * (di antara method showRegister() dan logout(), atau di posisi manapun dalam class tersebut)
+     */
+ 
+    public function sendResetLink(Request $request)
+    {
+        $request->validate(['email' => ['required', 'email', 'exists:users,email']]);
+ 
+        $status = Password::sendResetLink($request->only('email'));
+ 
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', 'Tautan reset password telah dikirim ke email Anda.')
+            : back()->withErrors(['email' => 'Gagal mengirim tautan reset. Pastikan email benar.']);
+    }
+ 
+    public function showResetForm(Request $request, string $token)
+    {
+        return view('auth.reset-password', [
+            'token' => $token,
+            'email' => $request->email,
+        ]);
+    }
+ 
+    public function resetPassword(Request $request)
+    {
+        $request->validate([
+            'token'    => ['required'],
+            'email'    => ['required', 'email'],
+            'password' => ['required', 'min:8', 'confirmed'],
+        ]);
+ 
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => \Illuminate\Support\Facades\Hash::make($password),
+                ])->save();
+            }
+        );
+ 
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('success', 'Password berhasil direset. Silakan login.')
+            : back()->withErrors(['email' => 'Token reset tidak valid atau sudah kedaluwarsa.']);
+    }
+}
 }

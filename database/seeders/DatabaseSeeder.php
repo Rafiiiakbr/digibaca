@@ -1,19 +1,13 @@
 <?php
-
 namespace Database\Seeders;
-
-use App\Models\User;
-use App\Models\Category;
-use App\Models\Book;
-use App\Models\Payment;
+ 
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
-use Carbon\Carbon;
-
+ 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+<<<<<<< HEAD
         // 1. Buat Akun Uji Coba untuk Masing-masing Role
         $admin = User::create([
             'nama' => 'Akun Admin',
@@ -77,6 +71,12 @@ class DatabaseSeeder extends Seeder
             'nominal' => 50000.00,
             'status' => 'success',
             'tanggal_bayar' => Carbon::now(),
+=======
+        $this->call([
+            UserSeeder::class,
+            CategorySeeder::class,
+            BookSeeder::class,
+>>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2
         ]);
     }
 }
