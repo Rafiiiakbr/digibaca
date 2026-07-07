@@ -46,7 +46,7 @@
                             <td class="text-center">
                                 @if($book->status_verifikasi == 'verified')
                                     <span class="badge bg-success text-uppercase">Verified</span>
-                                AppEnv@elseif($book->status_verifikasi == 'pending')
+                                @elseif($book->status_verifikasi == 'pending')
                                     <span class="badge bg-warning text-dark text-uppercase">Pending</span>
                                 @else
                                     <span class="badge bg-danger text-uppercase">Rejected</span>

@@ -28,6 +28,14 @@
                             <small class="text-muted">Diperlukan untuk memvalidasi batasan usia konten buku (cth: Buku 17+).</small>
                             @error('tanggal_lahir') <div class="invalid-feedback">{{ $message }}</div> @enderror
                         </div>
+                        <div class="mb-3">
+                            <label class="form-label">Mendaftar Sebagai</label>
+                            <select name="role" class="form-select @error('role') is-invalid @enderror" required>
+                                <option value="reader" {{ old('role') == 'reader' ? 'selected' : '' }}>Pembaca (Reader)</option>
+                                <option value="author" {{ old('role') == 'author' ? 'selected' : '' }}>Penulis (Author)</option>
+                            </select>
+                            @error('role') <div class="invalid-feedback">{{ $message }}</div> @enderror
+                        </div>
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Kata Sandi</label>

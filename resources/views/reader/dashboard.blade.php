@@ -10,7 +10,13 @@
         </div>
         <div class="col-auto">
             @if(!Auth::user()->status_premium)
-                <button class="btn btn-warning fw-semibold shadow-sm text-dark"><i class="bi bi-lightning-charge-fill"></i> Upgrade Premium</button>
+                <a href="{{ route('reader.premium.index') }}" class="btn btn-warning fw-semibold shadow-sm text-dark">
+                    <i class="bi bi-lightning-charge-fill"></i> Upgrade Premium
+                </a>
+            @else
+                <span class="badge bg-warning text-dark px-3 py-2 fs-6">
+                    <i class="bi bi-crown-fill me-1"></i> Member Premium
+                </span>
             @endif
         </div>
     </div>
@@ -36,7 +42,7 @@
                                     <h6 class="fw-bold mb-1 text-truncate-2">{{ $buku->judul }}</h6>
                                     <small class="text-muted d-block mb-2">{{ $buku->genre ?? 'Umum' }}</small>
                                 </div>
-                                <a href="#" class="btn btn-sm btn-outline-primary w-100">Baca</a>
+                                <a href="{{ route('reader.read', $buku->id) }}" class="btn btn-sm btn-outline-primary w-100">Baca</a>
                             </div>
                         </div>
                     </div>
@@ -56,7 +62,10 @@
                                 <strong class="d-block text-truncate small">{{ $bookmark->book->judul }}</strong>
                                 <small class="text-muted">Halaman / Letak: {{ $bookmark->halaman }}</small>
                             </div>
-                            <button class="btn btn-sm btn-light text-primary"><i class="bi bi-arrow-right-short"></i></button>
+                            <a href="{{ route('reader.read', $bookmark->book_id) }}"
+                               class="btn btn-sm btn-light text-primary flex-shrink-0" title="Lanjutkan Membaca">
+                                <i class="bi bi-arrow-right-short"></i>
+                            </a>
                         </li>
                     @empty
                         <li class="list-group-item px-0 py-2 text-muted small">Belum ada halaman yang ditandai.</li>

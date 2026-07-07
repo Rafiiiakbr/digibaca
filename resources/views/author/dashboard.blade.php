@@ -8,8 +8,13 @@
             <h2 class="fw-bold mb-1">Studio Penulis</h2>
             <p class="text-muted mb-0">Kelola manuskrip dan pantau status publikasi karya Anda.</p>
         </div>
-        <div class="col-auto">
-            <button class="btn btn-primary fw-semibold"><i class="bi bi-cloud-upload"></i> Unggah Buku Baru</button>
+        <div class="col-auto d-flex gap-2">
+            <a href="{{ route('author.books.index') }}" class="btn btn-outline-primary fw-semibold">
+                <i class="bi bi-journal-bookmarks me-1"></i> Semua Buku Saya
+            </a>
+            <a href="{{ route('author.books.create') }}" class="btn btn-primary fw-semibold">
+                <i class="bi bi-cloud-upload me-1"></i> Unggah Buku Baru
+            </a>
         </div>
     </div>
 
@@ -75,7 +80,10 @@
                                 @endif
                             </td>
                             <td>
-                                <button class="btn btn-sm btn-light text-secondary"><i class="bi bi-pencil-square"></i></button>
+                                <a href="{{ route('author.books.edit', $book->id) }}"
+                                   class="btn btn-sm btn-light text-secondary" title="Edit Buku">
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
                             </td>
                         </tr>
                     @empty

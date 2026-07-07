@@ -73,6 +73,7 @@ class DatabaseSeeder extends Seeder
         // 5. Buat Data Simulasi Pembayaran Masuk
         Payment::create([
             'user_id' => $readerPremium->id,
+            'order_id' => 'SEED-PAY-PREMIUM-' . time(),
             'nominal' => 50000.00,
             'status' => 'success',
             'tanggal_bayar' => Carbon::now(),

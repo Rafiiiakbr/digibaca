@@ -20,7 +20,7 @@ class CheckAgeMiddleware
                 return redirect()->route('login')->with('error', 'Konten ini memerlukan verifikasi usia. Silakan login.');
             }
 
-            if (Auth::user()->usia < $book->minimal_usia) {
+            if (Auth::user()->umur < $book->minimal_usia) {
                 return redirect()->route('reader.dashboard')->with('error', 'Maaf, konten ini hanya untuk pengguna berusia ' . $book->minimal_usia . ' tahun ke atas.');
             }
         }

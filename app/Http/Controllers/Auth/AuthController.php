@@ -47,7 +47,7 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-    // Memproses aksi registrasi pembaca (Reader)
+    // Memproses aksi registrasi
     public function register(Request $request)
     {
         $request->validate([
@@ -55,24 +55,28 @@ class AuthController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'tanggal_lahir' => 'required|date|before:today',
+            'role' => 'required|in:reader,author',
         ], [
             'tanggal_lahir.required' => 'Tanggal lahir wajib diisi untuk verifikasi usia sistem.',
             'password.confirmed' => 'Konfirmasi password tidak cocok.'
         ]);
 
-        // Menyimpan data user baru (Default role: reader)
+        // Menyimpan data user baru
         $user = User::create([
             'nama' => $request->nama,
             'email' => $request->email,
             'password' => Hash::make($request->password), // Enkripsi BCrypt otomatis oleh Laravel
             'tanggal_lahir' => $request->tanggal_lahir,
-            'role' => 'reader',
+            'role' => $request->role,
             'status_premium' => false,
         ]);
 
         Auth::login($user);
 
-        return redirect()->route('reader.dashboard')->with('success', 'Registrasi berhasil! Selamat datang.');
+        // Redirect ke dashboard yang sesuai dengan role yang didaftarkan
+        $redirectRoute = $user->role === 'author' ? 'author.dashboard' : 'reader.dashboard';
+
+        return redirect()->route($redirectRoute)->with('success', 'Registrasi berhasil! Selamat datang.');
     }
 
     // Memproses logout

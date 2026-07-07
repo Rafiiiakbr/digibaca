@@ -72,9 +72,14 @@
     // Konfigurasi Worker Lokasi Asal PDF.js
     pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
 
-    const url = "{{ asset($book->file_buku) }}";
+    const url = "{{ asset('storage/' . $book->file_buku) }}";
     const bookId = "{{ $book->id }}";
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const bookmarkGetUrl  = "{{ route('reader.bookmark.get', ['book_id' => '__ID__']) }}".replace('__ID__', bookId);
+    const bookmarkSaveUrl = "{{ route('reader.bookmark.save') }}";
+    const notesGetUrl     = "{{ route('reader.notes.get', ['book_id' => '__ID__']) }}".replace('__ID__', bookId);
+    const notesSaveUrl    = "{{ route('reader.notes.save') }}";
+    const notesDeleteBase = "{{ route('reader.notes.delete', ['id' => '__ID__']) }}".replace('__ID__', '');
 
     let pdfDoc = null,
         pageNum = 1,
@@ -125,11 +130,11 @@
         queueRenderPage(pageNum);
     });
 
-    // Sinkronisasi Pemulihan Posisi Bookmark Awal via REST API
-    fetch(`/api/bookmark/check/${bookId}`, { headers: { 'Authorization': `Bearer ${token}` } })
+    // Sinkronisasi Pemulihan Posisi Bookmark Awal
+    fetch(bookmarkGetUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
         .then(res => res.json())
         .then(resData => {
-            if(resData.success) { pageNum = resData.halaman; }
+            if(resData.success) { pageNum = parseInt(resData.halaman) || 1; }
             
             // Memulai Load Dokumen Utama
             pdfjsLib.getDocument(url).promise.then(pdfDoc_ => {
@@ -145,15 +150,15 @@
 
     // Aksi Klik Simpan Bookmark Mandiri
     document.getElementById('btn-bookmark').addEventListener('click', () => {
-        fetch('/api/bookmark/save', {
+        fetch(bookmarkSaveUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Authorization': `Bearer ${token}` },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
             body: JSON.stringify({ book_id: bookId, halaman: pageNum })
         })
         .then(res => res.json())
         .then(data => {
             if(data.success) {
-                document.getElementById('bookmark-text').textContent = "Tersimpan v";
+                document.getElementById('bookmark-text').textContent = "Tersimpan ✔";
                 setTimeout(() => { document.getElementById('bookmark-text').textContent = "Simpan Bookmark"; }, 2000);
             }
         });
@@ -161,17 +166,23 @@
 
     // --- LOGIKA ASYNC MANAJEMEN CATATAN (SIDEBAR) ---
     const loadNotes = () => {
-        fetch(`/api/notes/${bookId}`, { headers: { 'Authorization': `Bearer ${token}` } })
+        fetch(notesGetUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
             .then(res => res.json())
             .then(res => {
                 const wrapper = document.getElementById('notes-wrapper');
                 wrapper.innerHTML = '';
+                if (!res.data || res.data.length === 0) {
+                    wrapper.innerHTML = '<p class="text-muted small text-center">Belum ada catatan.</p>';
+                    return;
+                }
                 res.data.forEach(note => {
                     wrapper.innerHTML += `
-                        <div class="p-2 bg-light border rounded position-relative shadow-sm text-sm">
+                        <div class="p-2 bg-light border rounded position-relative shadow-sm">
                             <p class="mb-1 text-secondary" style="font-size: 13px;">${note.isi_catatan}</p>
                             <div class="text-end">
-                                <button onclick="deleteNote(${note.id})" class="btn btn-xs text-danger p-0 border-0" style="font-size: 11px;"><i class="fa-solid fa-trash-can"></i> Hapus</button>
+                                <button onclick="deleteNote(${note.id})" class="btn btn-sm text-danger p-0 border-0" style="font-size: 11px;">
+                                    <i class="bi bi-trash3"></i> Hapus
+                                </button>
                             </div>
                         </div>`;
                 });
@@ -182,9 +193,9 @@
         const txt = document.getElementById('note-input').value;
         if(!txt.trim()) return;
 
-        fetch('/api/notes/save', {
+        fetch(notesSaveUrl, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token, 'Authorization': `Bearer ${token}` },
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': token },
             body: JSON.stringify({ book_id: bookId, isi_catatan: txt })
         })
         .then(res => res.json())
@@ -197,9 +208,10 @@
     });
 
     window.deleteNote = (id) => {
-        fetch(`/api/notes/${id}`, {
+        const deleteUrl = notesDeleteBase + id;
+        fetch(deleteUrl, {
             method: 'DELETE',
-            headers: { 'X-CSRF-TOKEN': token, 'Authorization': `Bearer ${token}` }
+            headers: { 'X-CSRF-TOKEN': token }
         }).then(() => loadNotes());
     };
 

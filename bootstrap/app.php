@@ -11,9 +11,16 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Mendaftarkan alias middleware role di sini
+        // Mendaftarkan alias middleware agar bisa digunakan di routes
         $middleware->alias([
-            'role' => \App\Http\Middleware::class,
+            'role'          => \App\Http\Middleware\RoleMiddleware::class,
+            'check.premium' => \App\Http\Middleware\CheckPremiumMiddleware::class,
+            'check.age'     => \App\Http\Middleware\CheckAgeMiddleware::class,
+        ]);
+
+        // Mengecualikan route webhook Midtrans dari validasi CSRF
+        $middleware->validateCsrfTokens(except: [
+            'payment/notification',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
