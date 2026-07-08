@@ -44,7 +44,6 @@ class AuthController extends Controller
         return view('auth.register');
     }
 
-<<<<<<< HEAD
     // Memproses aksi registrasi
     public function register(Request $request)
     {
@@ -60,34 +59,19 @@ class AuthController extends Controller
         ]);
 
         // Menyimpan data user baru
-=======
-    public function register(RegisterRequest $request)
-    {
->>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2
         $user = User::create([
             'nama' => $request->nama,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'role' => $request->role,
             'tanggal_lahir' => $request->tanggal_lahir,
-<<<<<<< HEAD
             'role' => $request->role,
             'status_premium' => false,
-=======
->>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2
         ]);
 
         Auth::login($user);
 
-<<<<<<< HEAD
-        // Redirect ke dashboard yang sesuai dengan role yang didaftarkan
-        $redirectRoute = $user->role === 'author' ? 'author.dashboard' : 'reader.dashboard';
-
-        return redirect()->route($redirectRoute)->with('success', 'Registrasi berhasil! Selamat datang.');
-=======
         return redirect($this->redirectBasedOnRole($user))
-            ->with('success', 'Selamat datang, ' . $user->nama . '!');
->>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2
+            ->with('success', 'Registrasi berhasil! Selamat datang, ' . $user->nama . '!');
     }
 
     public function logout(Request $request)
@@ -109,12 +93,10 @@ class AuthController extends Controller
             default => route('reader.dashboard'),
         };
     }
-class AuthControllerPasswordResetAddition
-{
-    /*
-     * Tempelkan method di bawah ini ke dalam app/Http/Controllers/Auth/AuthController.php
-     * (di antara method showRegister() dan logout(), atau di posisi manapun dalam class tersebut)
-     */
+
+    // ==========================================
+    // Method Tambahan untuk Fitur Password Reset
+    // ==========================================
  
     public function sendResetLink(Request $request)
     {
@@ -156,5 +138,4 @@ class AuthControllerPasswordResetAddition
             ? redirect()->route('login')->with('success', 'Password berhasil direset. Silakan login.')
             : back()->withErrors(['email' => 'Token reset tidak valid atau sudah kedaluwarsa.']);
     }
-}
 }

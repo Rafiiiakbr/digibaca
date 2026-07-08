@@ -1,12 +1,13 @@
-<<<<<<< HEAD
-@extends('layouts.app')
-@section('title', 'Edit Buku: ' . $book->judul)
+@extends('layouts.author')
+
+@section('title', 'Edit Buku')
+@section('page-title', 'Edit Buku')
 
 @section('content')
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-md-10">
-            <div class="card border p-4 shadow-sm bg-white">
+            <div class="card-digibaca p-4">
                 <div class="d-flex align-items-center mb-4">
                     <a href="{{ route('author.books.index') }}" class="btn btn-sm btn-light me-3">
                         <i class="bi bi-arrow-left"></i>
@@ -20,11 +21,23 @@
                 @if($book->status_verifikasi == 'rejected')
                     <div class="alert alert-danger mb-4">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        <strong>Buku ini sebelumnya ditolak oleh admin.</strong> Silakan perbaiki isi buku dan ajukan ulang.
+                        <strong>Buku ini ditolak oleh admin.</strong> 
+                        @if($book->alasan_penolakan)
+                            <br><span class="small">Alasan: {{ $book->alasan_penolakan }}</span>
+                        @endif
+                        <br><span class="small">Silakan perbaiki isi buku dan ajukan ulang.</span>
                     </div>
                 @endif
 
-                <hr>
+                @if($errors->any())
+                    <div class="alert alert-danger mb-4">
+                        <ul class="mb-0 ps-3 small">
+                            @foreach($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
                 <form action="{{ route('author.books.update', $book->id) }}" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -45,7 +58,7 @@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Kategori Utama *</label>
-                                    <select name="kategori_id" class="form-select" required>
+                                    <select name="kategori_id" class="form-select @error('kategori_id') is-invalid @enderror" required>
                                         <option value="">-- Pilih Kategori --</option>
                                         @foreach($categories as $category)
                                             <option value="{{ $category->id }}"
@@ -54,6 +67,7 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                    @error('kategori_id') <div class="invalid-feedback">{{ $message }}</div> @enderror
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label class="form-label fw-semibold">Genre / Sub-Kategori</label>
@@ -125,8 +139,7 @@
                                     <p class="text-muted small">Belum ada cover.</p>
                                 @endif
                                 <label class="form-label fw-semibold">Ganti Cover (JPG/PNG, Maks 2MB)</label>
-                                <input type="file" name="cover" class="form-control"
-                                    accept="image/*">
+                                <input type="file" name="cover" class="form-control" accept="image/*">
                                 <small class="text-muted">Kosongkan jika tidak ingin mengganti cover.</small>
                                 @error('cover') <div class="text-danger small mt-1">{{ $message }}</div> @enderror
                             </div>
@@ -142,13 +155,13 @@
 
                     <hr class="my-4">
                     <div class="alert alert-info mb-4 small">
-                        <i class="bi bi-info-circle-fill me-2"></i>
-                        Setelah Anda menyimpan perubahan, buku akan dikembalikan ke status <strong>Menunggu Review</strong> dan perlu diverifikasi ulang oleh Admin.
+                        <i class="bi bi-info-circle-fill me-1"></i> Mengubah data buku akan mengirimkannya kembali ke proses verifikasi admin.
                     </div>
+                    
                     <div class="d-flex justify-content-end gap-2">
-                        <a href="{{ route('author.books.index') }}" class="btn btn-light px-4 rounded-pill">Batalkan</a>
-                        <button type="submit" class="btn btn-primary px-5 rounded-pill fw-bold">
-                            <i class="bi bi-save me-1"></i> Simpan Perubahan
+                        <a href="{{ route('author.books.index') }}" class="btn btn-light px-4">Batal</a>
+                        <button type="submit" class="btn btn-digibaca px-4 fw-bold">
+                            <i class="bi bi-check-lg me-1"></i> Simpan Perubahan
                         </button>
                     </div>
                 </form>
@@ -157,44 +170,3 @@
     </div>
 </div>
 @endsection
-=======
-@extends('layouts.author')
- 
-@section('title', 'Edit Buku')
-@section('page-title', 'Edit Buku')
- 
-@section('content')
- 
-<div class="card-digibaca p-4">
-    @if($book->status_verifikasi == 'rejected' && $book->alasan_penolakan)
-        <div class="alert alert-danger">
-            <strong><i class="bi bi-exclamation-triangle-fill me-1"></i> Buku ini ditolak:</strong> {{ $book->alasan_penolakan }}
-        </div>
-    @endif
- 
-    @if($errors->any())
-        <div class="alert alert-danger">
-            <ul class="mb-0 ps-3 small">
-                @foreach($errors->all() as $error)<li>{{ $error }}</li>@endforeach
-            </ul>
-        </div>
-    @endif
- 
-    <div class="alert alert-info small">
-        <i class="bi bi-info-circle me-1"></i> Mengubah data buku akan mengirimkannya kembali ke proses verifikasi admin.
-    </div>
- 
-    <form method="POST" action="{{ route('author.books.update', $book->id) }}" enctype="multipart/form-data">
-        @csrf
-        @method('PUT')
-        @include('author.books._form', ['book' => $book])
- 
-        <div class="d-flex gap-2 mt-4">
-            <button type="submit" class="btn btn-digibaca px-4"><i class="bi bi-check-lg me-1"></i> Simpan Perubahan</button>
-            <a href="{{ route('author.books.index') }}" class="btn btn-light px-4">Batal</a>
-        </div>
-    </form>
-</div>
- 
-@endsection
->>>>>>> 4e8ee55267e1902bc1fc12f65137dcef8889b2d2

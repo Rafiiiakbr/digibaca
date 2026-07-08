@@ -21,6 +21,13 @@ class AuthorDashboardController extends Controller
  
         $recentBooks = $books->take(5);
  
-        return view('author.dashboard', compact('user', 'stats', 'recentBooks'));
+        // UBAH BARIS COMPACT DI BAWAH INI:
+        // Kita daftarkan juga nama variabel 'my_books' yang isinya mengambil dari $recentBooks atau $books
+        return view('author.dashboard', [
+            'user'        => $user,
+            'stats'       => $stats,
+            'recentBooks' => $recentBooks,
+            'my_books'    => $books // <-- Kita tambahkan ini agar view tidak error lagi!
+        ]);
     }
 }

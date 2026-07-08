@@ -49,7 +49,9 @@ return new class extends Migration
 
             $table->index(['status_verifikasi', 'jenis_akses']);
             $table->index(['kategori_id', 'genre']);
-            $table->fullText(['judul', 'deskripsi', 'genre']);
+            
+            // Dinonaktifkan karena SQLite tidak mendukung index fullText bawaan Laravel
+            // $table->fullText(['judul', 'deskripsi', 'genre']);
         });
     }
 

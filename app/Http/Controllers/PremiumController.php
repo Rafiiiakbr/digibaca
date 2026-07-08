@@ -36,7 +36,7 @@ class PremiumController extends Controller
  
         Payment::create([
             'user_id'         => $user->id,
-            'nominal'         => 99000,
+            'nominal'         => 100000,
             'status'          => 'pending',
             'metode'          => $request->metode,
             'kode_pembayaran' => Payment::generateKodePembayaran(),
