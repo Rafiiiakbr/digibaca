@@ -6,7 +6,7 @@ use App\Http\Middleware\AgeVerificationMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Support\Facades\URL; // <-- Menambahkan Facade URL agar bisa memaksa skema HTTPS
+use Illuminate\Support\Facades\URL; // <-- Tetap butuh ini
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -27,14 +27,12 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'payment/notification',
         ]);
-    })
-    ->withExceptions(function (Exceptions $exceptions) {
-        //
-    })
-    ->then(function () {
-        // Paksa HTTPS di lingkungan production agar CSS dan JS termuat dengan aman
+
+        // Di sinilah kita paksa HTTPS dengan aman untuk lingkungan production
         if (config('app.env') === 'production') {
             URL::forceScheme('https');
         }
     })
-    ->create();
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
