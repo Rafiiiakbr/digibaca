@@ -31,8 +31,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'payment/notification',
         ]);
 
-        // Paksa HTTPS di lingkungan production
-        if (config('app.env') === 'production') {
+        // Gunakan env() agar tidak bentrok saat config:cache berjalan
+        if (env('APP_ENV') === 'production') {
             URL::forceScheme('https');
         }
     })
