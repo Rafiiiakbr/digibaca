@@ -6,7 +6,6 @@ use App\Http\Middleware\AgeVerificationMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use Illuminate\Support\Facades\URL;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,9 +15,6 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
-        // Daftarkan proxy tepercaya agar Laravel tahu koneksi aslinya adalah HTTPS
-        $middleware->trustProxies(at: '*');
-
         // Mendaftarkan alias middleware agar rute web.php bisa mengenalnya
         $middleware->alias([
             'role'       => RoleMiddleware::class,
@@ -30,11 +26,6 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'payment/notification',
         ]);
-
-        // Gunakan env() agar tidak bentrok saat config:cache berjalan
-        if (env('APP_ENV') === 'production') {
-            URL::forceScheme('https');
-        }
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
