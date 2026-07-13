@@ -10,6 +10,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    
+    <!-- Memaksa browser memuat semua aset HTTP lewat protokol aman HTTPS -->
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    
     <title>@yield('title', 'DigiBaca') — Sistem Membaca Buku Digital</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">

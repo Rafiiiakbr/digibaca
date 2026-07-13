@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+        // Mengatur proxy tepercaya agar Laravel mengenali koneksi HTTPS dari Railway
+        $middleware->trustProxies(at: '*');
+
         // Mendaftarkan alias middleware agar rute web.php bisa mengenalnya
         $middleware->alias([
             'role'       => RoleMiddleware::class,
