@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers\Author;
  
 use App\Http\Controllers\Controller;
@@ -8,6 +9,8 @@ use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+// TAMBAHAN: Mengimport Gate untuk otorisasi modern
+use Illuminate\Support\Facades\Gate;
  
 class AuthorBookController extends Controller
 {
@@ -51,14 +54,17 @@ class AuthorBookController extends Controller
  
     public function edit(Book $book)
     {
-        $this->authorize('update', $book);
+        // PERUBAHAN: Menggunakan Gate::authorize
+        Gate::authorize('update', $book);
+        
         $categories = Category::orderBy('nama_kategori')->get();
         return view('author.books.edit', compact('book', 'categories'));
     }
  
     public function update(UpdateBookRequest $request, Book $book)
     {
-        $this->authorize('update', $book);
+        // PERUBAHAN: Menggunakan Gate::authorize
+        Gate::authorize('update', $book);
  
         $data = $request->validated();
  
@@ -86,7 +92,8 @@ class AuthorBookController extends Controller
  
     public function destroy(Book $book)
     {
-        $this->authorize('delete', $book);
+        // PERUBAHAN: Menggunakan Gate::authorize
+        Gate::authorize('delete', $book);
  
         Storage::disk('public')->delete(['covers/' . $book->cover, 'books/' . $book->file_buku]);
         $book->delete();

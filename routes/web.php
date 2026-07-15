@@ -83,6 +83,11 @@ Route::middleware('auth')->group(function () {
     // ── Author Routes ──────────────────────────────────────────
     Route::middleware('role:author')->prefix('author')->name('author.')->group(function () {
         Route::get('/dashboard', [AuthorDashboardController::class, 'index'])->name('dashboard');
+        
+        // TAMBAHAN: Route profil untuk akun Author (Penulis)
+        Route::get('/profil',    [ProfileController::class, 'edit'])->name('profile');
+        Route::put('/profil',    [ProfileController::class, 'update'])->name('profile.update');
+        
         Route::resource('/buku', AuthorBookController::class)->names([
             'index'   => 'books.index',
             'create'  => 'books.create',

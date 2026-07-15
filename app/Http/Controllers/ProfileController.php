@@ -1,3 +1,5 @@
+<?php
+
 namespace App\Http\Controllers;
  
 use Illuminate\Http\Request;
@@ -10,7 +12,14 @@ class ProfileController extends Controller
     public function edit()
     {
         $user = Auth::user();
-        return view('reader.profile', compact('user'));
+
+        // Deteksi dinamis: gunakan views 'author.profile' jika role-nya penulis dan filenya ada.
+        // Jika tidak, gunakan view bawaan 'reader.profile'
+        $viewName = ($user->role === 'author' && view()->exists('author.profile')) 
+            ? 'author.profile' 
+            : 'reader.profile';
+
+        return view($viewName, compact('user'));
     }
  
     public function update(Request $request)
